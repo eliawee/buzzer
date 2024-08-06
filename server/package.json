@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/socket.io": "^3.0.2",
+    "hashids": "^2.3.0",
+    "mongoose": "^8.4.4",
+    "short-unique-id": "^5.2.0",
+    "socket.io": "^4.7.5",
+    "socketio-wildcard": "^2.0.0",
+    "uuid-readable": "^0.0.2"
+  },
+  "devDependencies": {
+    "@types/socketio-wildcard": "^2.0.7",
+    "@types/uuid-readable": "^0.0.3",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
