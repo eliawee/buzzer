@@ -24,6 +24,7 @@ let requestMessages = [
   "request lobby",
   "request nickname update",
   "request buzz",
+  "request reset buzz",
 ];
 
 function forwardMessages(gameId: string, socket: Socket, messages: string[]) {

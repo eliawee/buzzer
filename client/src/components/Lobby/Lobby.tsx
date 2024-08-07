@@ -1,5 +1,4 @@
 import { Socket } from "socket.io-client";
-import "./Lobby.css";
 import { useEffect, useReducer, useState } from "react";
 import { SyncedGameState } from "../../types";
 

@@ -1,5 +1,4 @@
 import { io, Socket, connect } from "socket.io-client";
-import "./Landing.css";
 import { useEffect, useReducer } from "react";
 
 type State = {

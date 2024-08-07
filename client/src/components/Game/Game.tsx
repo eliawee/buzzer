@@ -1,4 +1,3 @@
-import "./Game.css";
 import { useEffect, useReducer } from "react";
 import { Player, SyncedGameState } from "../../types";
 import Transmitter from "../../Transmitter";
@@ -7,7 +6,10 @@ import {
   broadcastGameState,
   requestBuzz,
   requestBuzzReceived,
+  requestResetBuzzers,
 } from "./actions";
+import HostView from "./Game/HostView";
+import PlayerView from "./Game/PlayerView";
 
 type GameProps = {
   playerId: string;
@@ -51,18 +53,15 @@ export default function Game(props: GameProps) {
   }, []);
 
   return (
-    <div className="game">
-      {host && playerWhoBuzzed == undefined
-        ? "Waiting for a player to buzz"
-        : null}
+    <>
+      {host && (
+        <HostView
+          playerWhoBuzzed={playerWhoBuzzed}
+          resetBuzzers={requestResetBuzzers(state, dispatch)}
+        />
+      )}
 
-      {host && playerWhoBuzzed != undefined
-        ? `${playerWhoBuzzed.nickname} buzzed`
-        : null}
-
-      {!host ? (
-        <button onClick={requestBuzz(state, dispatch)}>BUZZ</button>
-      ) : null}
-    </div>
+      {!host && <PlayerView onBuzz={requestBuzz(state, dispatch)} />}
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import { connect, Socket } from "socket.io-client";
-import "./JoiningHall.css";
 import { useEffect, useReducer } from "react";
 import { LobbySyncedState } from "../Lobby/Lobby";
 

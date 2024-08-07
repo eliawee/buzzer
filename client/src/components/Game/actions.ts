@@ -23,3 +23,9 @@ export let requestBuzzReceived =
       actionType: ActionType.RequestBuzzReceived,
       playerId,
     });
+
+export let requestResetBuzzers =
+  (state: State, dispatch: React.Dispatch<Action>) => () =>
+    dispatch({
+      actionType: ActionType.RequestResetBuzzers,
+    });

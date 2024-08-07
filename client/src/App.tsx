@@ -1,6 +1,4 @@
-import process from "process";
 import { Socket } from "socket.io-client";
-import "./App.css";
 import Landing from "./components/Landing/Landing";
 import { useEffect, useReducer } from "react";
 import JoiningHall from "./components/JoiningHall/JoiningHall";
@@ -140,7 +138,7 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
+    <>
       {state.stateType == StateType.Landed && requestedGameId.length == 0 ? (
         <Landing onGameCreated={onGameCreated(state, dispatch)} />
       ) : null}
@@ -179,7 +177,7 @@ function App() {
           initialSyncedState={state.game}
         />
       ) : null}
-    </div>
+    </>
   );
 }
 

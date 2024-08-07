@@ -28,6 +28,7 @@ export default class Transmitter {
 
   broadcastGameState: Message<SyncedGameState>;
   requestBuzz: Message<{ playerId: string }>;
+  requestResetBuzz: Message<void>;
 
   constructor(socket: Socket) {
     this.socket = socket;
@@ -41,10 +42,13 @@ export default class Transmitter {
       this.socket,
       "request buzz"
     );
+
+    this.requestResetBuzz = new Message(this.socket, "request reset buzz");
   }
 
   public reset() {
     this.broadcastGameState.off();
     this.requestBuzz.off();
+    this.requestResetBuzz.off();
   }
 }

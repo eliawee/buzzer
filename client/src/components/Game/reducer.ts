@@ -35,5 +35,12 @@ export default function reducer(state: State, action: Action): State {
           : syncedState;
       transmitter.broadcastGameState.emit(syncedState);
       return state;
+    case ActionType.RequestResetBuzzers:
+      syncedState = {
+        ...state.synced,
+        buzzPlayerId: undefined,
+      };
+      transmitter.broadcastGameState.emit(syncedState);
+      return state;
   }
 }
