@@ -13,7 +13,9 @@ export default ({ players, addScore }: IProps) => {
   const getRow = (player: Player) =>
     player.nickname != "host" && (
       <TableRow key={player.id}>
-        <TableCell align="right">{player.nickname}</TableCell>
+        <TableCell align="right">
+          <Typography variant="h5">{player.nickname}</Typography>
+        </TableCell>
         <TableCell>
           <Stack justifyContent="flex-end" direction="row" spacing={2}>
             {addScore && (
@@ -26,7 +28,9 @@ export default ({ players, addScore }: IProps) => {
                 -
               </Button>
             )}
-            <Typography align="center">{player.score}</Typography>
+            <Typography align="center" variant="h5">
+              {player.score}
+            </Typography>
             {addScore && (
               <Button
                 onClick={() => addScore({ playerId: player.id, scoreDiff: 1 })}
