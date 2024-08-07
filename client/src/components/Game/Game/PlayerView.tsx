@@ -14,7 +14,7 @@ export default ({ onBuzz, player, playerWhoBuzzed }: IProps) => {
         disabled={playerWhoBuzzed !== undefined}
         overrideColor={player.color}
       >
-        BUZZ
+        Buzz
       </BuzzerButton>
     </>
   );
@@ -23,6 +23,8 @@ export default ({ onBuzz, player, playerWhoBuzzed }: IProps) => {
 const BuzzerButton = styled(Button)(
   ({ overrideColor }: { overrideColor: string }) => ({
     backgroundColor: overrideColor,
+    height: 200,
+    fontSize: 90,
   })
 );
 
