@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, styled } from "@mui/material";
 import { Player } from "../../../types";
 
 export default ({ onBuzz, player, playerWhoBuzzed }: IProps) => {
@@ -7,17 +7,24 @@ export default ({ onBuzz, player, playerWhoBuzzed }: IProps) => {
       <Typography align="center" variant="h4">
         {player.nickname}
       </Typography>
-      <Button
+      <BuzzerButton
         onClick={onBuzz}
         variant="contained"
         size="large"
         disabled={playerWhoBuzzed !== undefined}
+        overrideColor={player.color}
       >
         BUZZ
-      </Button>
+      </BuzzerButton>
     </>
   );
 };
+
+const BuzzerButton = styled(Button)(
+  ({ overrideColor }: { overrideColor: string }) => ({
+    backgroundColor: overrideColor,
+  })
+);
 
 type IProps = {
   onBuzz: () => void;

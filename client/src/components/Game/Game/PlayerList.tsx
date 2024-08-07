@@ -1,4 +1,6 @@
 import {
+  Avatar,
+  Box,
   Button,
   Stack,
   Table,
@@ -9,12 +11,20 @@ import {
 } from "@mui/material";
 import { Player } from "../../../types";
 
-export default ({ players, addScore }: IProps) => {
+export default ({ players, playerWhoBuzzed, addScore }: IProps) => {
   const getRow = (player: Player) =>
     player.nickname != "host" && (
       <TableRow key={player.id}>
         <TableCell align="right">
-          <Typography variant="h5">{player.nickname}</Typography>
+          <Avatar sx={{ bgcolor: player.color }}></Avatar>
+        </TableCell>
+        <TableCell align="right">
+          <Typography
+            variant="h5"
+            fontWeight={player == playerWhoBuzzed ? "bold" : "regular"}
+          >
+            {player.nickname}
+          </Typography>
         </TableCell>
         <TableCell>
           <Stack justifyContent="flex-end" direction="row" spacing={2}>
@@ -55,6 +65,7 @@ export default ({ players, addScore }: IProps) => {
 
 type IProps = {
   players: Player[];
+  playerWhoBuzzed?: Player;
   addScore?: ({
     playerId,
     scoreDiff,

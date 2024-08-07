@@ -25,7 +25,11 @@ export default ({
       Reset buzzers
     </Button>
 
-    <PlayerList players={players} addScore={addScore} />
+    <PlayerList
+      players={players}
+      playerWhoBuzzed={playerWhoBuzzed}
+      addScore={addScore}
+    />
   </>
 );
 

@@ -1,6 +1,8 @@
 import { Socket } from "socket.io-client";
 import { useEffect, useReducer, useState } from "react";
 import { SyncedGameState } from "../../types";
+import { Button, Paper, Stack, Typography, styled } from "@mui/material";
+import { pickColor } from "./utils";
 
 const MAX_PLAYERS_COUNT = 5;
 
@@ -150,11 +152,13 @@ let updateNickname =
   };
 
 let startGame = (state: State, dispatch: React.Dispatch<Action>) => () => {
+  let pickedColors: string[] = [];
   let game: SyncedGameState = {
     players: state.synced.players.map((player) => ({
       nickname: player.nickname,
       id: player.id,
       score: 0,
+      color: pickColor(pickedColors),
     })),
   };
 
@@ -225,54 +229,56 @@ export default function Lobby(props: LobbyProps) {
   let isNicknameValid =
     nicknameInputValue.length >= 3 && nicknameInputValue.length <= 12;
 
+  // TODO: make two different view files
   return (
-    <div className="lobby">
-      <div className="header">
-        <a href="/">
-          <h1>Buzzer</h1>
-        </a>
-      </div>
-      <div className="content">
-        {playerNickname.length == 0 ? (
-          <div className="nickname-edit">
-            <div className="group">
-              <input
-                type="text"
-                placeholder="Nom"
-                value={nicknameInputValue}
-                onChange={(evt) => setNicknameInputValue(evt.target.value)}
-                onKeyDown={(evt) => {
-                  if (evt.key == "Enter" && isNicknameValid) {
-                    updateNickname(state, nicknameInputValue, dispatch)();
-                  }
-                }}
-              />
-            </div>
-            <button
-              disabled={!isNicknameValid}
-              onClick={updateNickname(state, nicknameInputValue, dispatch)}
+    <Container>
+      {playerNickname.length == 0 ? (
+        <div className="nickname-edit">
+          <div className="group">
+            <input
+              type="text"
+              placeholder="Nom"
+              value={nicknameInputValue}
+              onChange={(evt) => setNicknameInputValue(evt.target.value)}
+              onKeyDown={(evt) => {
+                if (evt.key == "Enter" && isNicknameValid) {
+                  updateNickname(state, nicknameInputValue, dispatch)();
+                }
+              }}
+            />
+          </div>
+          <button
+            disabled={!isNicknameValid}
+            onClick={updateNickname(state, nicknameInputValue, dispatch)}
+          >
+            Valider
+          </button>
+        </div>
+      ) : (
+        <Stack spacing={2}>
+          {readyPlayers.map((player) => (
+            <Typography variant="h4" key={player.id}>
+              {player.nickname}
+            </Typography>
+          ))}
+          {host ? (
+            <Button
+              variant="contained"
+              size="large"
+              disabled={readyPlayers.length < 2}
+              onClick={startGame(state, dispatch)}
             >
-              Valider
-            </button>
-          </div>
-        ) : (
-          <div className="players-list">
-            {readyPlayers.map((player) => (
-              <div className="player-nickname" key={player.id}>
-                {player.nickname}
-              </div>
-            ))}
-            {host ? (
-              <button
-                disabled={readyPlayers.length < 2}
-                onClick={startGame(state, dispatch)}
-              >
-                Commencer
-              </button>
-            ) : null}
-          </div>
-        )}
-      </div>
-    </div>
+              Commencer
+            </Button>
+          ) : null}
+        </Stack>
+      )}
+    </Container>
   );
 }
+
+const Container = styled(Paper)({
+  width: "80vw",
+  padding: 20,
+  margin: 20,
+});
