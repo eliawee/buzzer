@@ -29,3 +29,12 @@ export let requestResetBuzzers =
     dispatch({
       actionType: ActionType.RequestResetBuzzers,
     });
+
+export let requestAddScore =
+  (state: State, dispatch: React.Dispatch<Action>) =>
+  ({ playerId, scoreDiff }: { playerId: string; scoreDiff: number }) =>
+    dispatch({
+      actionType: ActionType.RequestAddScore,
+      playerId,
+      scoreDiff,
+    });

@@ -2,34 +2,60 @@ import {
   Button,
   Stack,
   Table,
+  TableBody,
   TableCell,
   TableRow,
   Typography,
 } from "@mui/material";
 import { Player } from "../../../types";
 
-export default ({ players }: IProps) => {
+export default ({ players, addScore }: IProps) => {
   const getRow = (player: Player) =>
     player.nickname != "host" && (
-      <TableRow>
+      <TableRow key={player.id}>
         <TableCell align="right">{player.nickname}</TableCell>
         <TableCell>
           <Stack justifyContent="flex-end" direction="row" spacing={2}>
-            <Button color="error" variant="contained" size="small">
-              -
-            </Button>
-            <Typography align="center">0</Typography>
-            <Button color="success" variant="contained" size="small">
-              +
-            </Button>
+            {addScore && (
+              <Button
+                onClick={() => addScore({ playerId: player.id, scoreDiff: -1 })}
+                color="error"
+                variant="contained"
+                size="small"
+              >
+                -
+              </Button>
+            )}
+            <Typography align="center">{player.score}</Typography>
+            {addScore && (
+              <Button
+                onClick={() => addScore({ playerId: player.id, scoreDiff: 1 })}
+                color="success"
+                variant="contained"
+                size="small"
+              >
+                +
+              </Button>
+            )}
           </Stack>
         </TableCell>
       </TableRow>
     );
 
-  return <Table>{players.map(getRow)}</Table>;
+  return (
+    <Table>
+      <TableBody>{players.map(getRow)}</TableBody>
+    </Table>
+  );
 };
 
 type IProps = {
   players: Player[];
+  addScore?: ({
+    playerId,
+    scoreDiff,
+  }: {
+    playerId: string;
+    scoreDiff: number;
+  }) => void;
 };

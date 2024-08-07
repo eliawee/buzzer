@@ -7,6 +7,7 @@ import {
   requestBuzz,
   requestBuzzReceived,
   requestResetBuzzers,
+  requestAddScore,
 } from "./actions";
 import HostView from "./Game/HostView";
 import PlayerView from "./Game/PlayerView";
@@ -61,6 +62,7 @@ export default function Game(props: GameProps) {
             players={state.synced.players}
             playerWhoBuzzed={playerWhoBuzzed}
             resetBuzzers={requestResetBuzzers(state, dispatch)}
+            addScore={requestAddScore(state, dispatch)}
           />
         )}
 

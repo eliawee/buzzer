@@ -154,6 +154,7 @@ let startGame = (state: State, dispatch: React.Dispatch<Action>) => () => {
     players: state.synced.players.map((player) => ({
       nickname: player.nickname,
       id: player.id,
+      score: 0,
     })),
   };
 
@@ -257,7 +258,9 @@ export default function Lobby(props: LobbyProps) {
         ) : (
           <div className="players-list">
             {readyPlayers.map((player) => (
-              <div className="player-nickname">{player.nickname}</div>
+              <div className="player-nickname" key={player.id}>
+                {player.nickname}
+              </div>
             ))}
             {host ? (
               <button

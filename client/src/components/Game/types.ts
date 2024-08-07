@@ -18,6 +18,7 @@ export enum ActionType {
   RequestBuzzReceived,
   RequestResetBuzzers,
   SyncedGameStateReceived,
+  RequestAddScore,
 }
 
 export type SyncedGameStateReceivedAction = {
@@ -38,8 +39,15 @@ export type RequestResetBuzzersAction = {
   actionType: ActionType.RequestResetBuzzers;
 };
 
+export type RequestAddScoreAction = {
+  actionType: ActionType.RequestAddScore;
+  playerId: string;
+  scoreDiff: number;
+};
+
 export type Action =
   | SyncedGameStateReceivedAction
   | RequestBuzzAction
   | RequestBuzzReceivedAction
-  | RequestResetBuzzersAction;
+  | RequestResetBuzzersAction
+  | RequestAddScoreAction;

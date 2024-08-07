@@ -42,5 +42,16 @@ export default function reducer(state: State, action: Action): State {
       };
       transmitter.broadcastGameState.emit(syncedState);
       return state;
+    case ActionType.RequestAddScore:
+      syncedState = {
+        ...state.synced,
+        players: state.synced.players.map((player) =>
+          player.id == action.playerId
+            ? { ...player, score: player.score + action.scoreDiff }
+            : player
+        ),
+      };
+      transmitter.broadcastGameState.emit(syncedState);
+      return state;
   }
 }
