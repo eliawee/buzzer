@@ -10,6 +10,7 @@ import {
 } from "./actions";
 import HostView from "./Game/HostView";
 import PlayerView from "./Game/PlayerView";
+import { Paper, Stack, styled } from "@mui/material";
 
 type GameProps = {
   playerId: string;
@@ -53,15 +54,30 @@ export default function Game(props: GameProps) {
   }, []);
 
   return (
-    <>
-      {host && (
-        <HostView
-          playerWhoBuzzed={playerWhoBuzzed}
-          resetBuzzers={requestResetBuzzers(state, dispatch)}
-        />
-      )}
+    <Container elevation={3}>
+      <Stack spacing={1}>
+        {host && (
+          <HostView
+            players={state.synced.players}
+            playerWhoBuzzed={playerWhoBuzzed}
+            resetBuzzers={requestResetBuzzers(state, dispatch)}
+          />
+        )}
 
-      {!host && <PlayerView onBuzz={requestBuzz(state, dispatch)} />}
-    </>
+        {!host && (
+          <PlayerView
+            onBuzz={requestBuzz(state, dispatch)}
+            player={localPlayer}
+            playerWhoBuzzed={playerWhoBuzzed}
+          />
+        )}
+      </Stack>
+    </Container>
   );
 }
+
+const Container = styled(Paper)({
+  width: "80vw",
+  padding: 20,
+  margin: 20,
+});

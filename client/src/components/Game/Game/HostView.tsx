@@ -1,36 +1,31 @@
-import { Button, Stack, Typography, styled } from "@mui/material";
-import Paper from "@mui/material/Paper";
+import { Button, Typography } from "@mui/material";
 
 import { Player } from "../../../types";
+import PlayerList from "./PlayerList";
 
-export default ({ playerWhoBuzzed, resetBuzzers }: IProps) => (
-  <Container elevation={3}>
-    <Stack spacing={1}>
-      <Typography align="center" variant="h4">
-        {playerWhoBuzzed == undefined ? "Waiting for a player to buzz" : null}
-        {playerWhoBuzzed != undefined
-          ? `${playerWhoBuzzed.nickname} buzzed`
-          : null}
-      </Typography>
-      <Button
-        onClick={resetBuzzers}
-        variant="contained"
-        size="large"
-        disabled={!playerWhoBuzzed}
-      >
-        Reset buzzers
-      </Button>
-    </Stack>
-  </Container>
+export default ({ players, playerWhoBuzzed, resetBuzzers }: IProps) => (
+  <>
+    <Typography align="center" variant="h4">
+      {playerWhoBuzzed == undefined ? "Waiting for a player to buzz" : null}
+      {playerWhoBuzzed != undefined
+        ? `${playerWhoBuzzed.nickname} buzzed`
+        : null}
+    </Typography>
+    <Button
+      onClick={resetBuzzers}
+      variant="contained"
+      size="large"
+      disabled={!playerWhoBuzzed}
+    >
+      Reset buzzers
+    </Button>
+
+    <PlayerList players={players} />
+  </>
 );
 
-const Container = styled(Paper)({
-  width: "80vw",
-  padding: 20,
-  margin: 20,
-});
-
 type IProps = {
+  players: Player[];
   playerWhoBuzzed?: Player;
   resetBuzzers: () => void;
 };
