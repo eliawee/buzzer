@@ -11,7 +11,8 @@ import {
 } from "./actions";
 import HostView from "./Game/HostView";
 import PlayerView from "./Game/PlayerView";
-import { Paper, Stack, styled } from "@mui/material";
+import { Stack } from "@mui/material";
+import BuzzerContainer from "../common/Container";
 
 type GameProps = {
   playerId: string;
@@ -55,7 +56,7 @@ export default function Game(props: GameProps) {
   }, []);
 
   return (
-    <Container elevation={3}>
+    <BuzzerContainer elevation={3}>
       <Stack spacing={1}>
         {host && (
           <HostView
@@ -74,12 +75,6 @@ export default function Game(props: GameProps) {
           />
         )}
       </Stack>
-    </Container>
+    </BuzzerContainer>
   );
 }
-
-const Container = styled(Paper)({
-  width: "80vw",
-  padding: 20,
-  margin: 20,
-});

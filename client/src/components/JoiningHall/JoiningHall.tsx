@@ -1,6 +1,7 @@
 import { connect, Socket } from "socket.io-client";
 import { useEffect, useReducer } from "react";
 import { LobbySyncedState } from "../Lobby/Lobby";
+import BuzzerContainer from "../common/Container";
 
 type State = {
   gameId: string;
@@ -100,5 +101,5 @@ export default function JoiningHall({
     }
   });
 
-  return <div>Joining</div>;
+  return <BuzzerContainer>Joining</BuzzerContainer>;
 }

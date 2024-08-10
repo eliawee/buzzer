@@ -1,8 +1,10 @@
 import { Socket } from "socket.io-client";
 import { useEffect, useReducer, useState } from "react";
 import { SyncedGameState } from "../../types";
-import { Button, Paper, Stack, Typography, styled } from "@mui/material";
 import { pickColor } from "./utils";
+import BuzzerContainer from "../common/Container";
+import PlayerLobby from "./PlayerLobby";
+import HostLobby from "./HostLobby";
 
 const MAX_PLAYERS_COUNT = 5;
 
@@ -27,7 +29,7 @@ type HostLobbyProps = BaseProps & {
 
 type LobbyProps = GuestLobbyProps | HostLobbyProps;
 
-type Player = {
+export type Player = {
   id: string;
   nickname: string;
 };
@@ -87,20 +89,20 @@ type Action =
   | GameStartBroadcastAction;
 
 function reducer(state: State, action: Action): State {
-  let { socket } = state;
+  const { socket } = state;
 
   switch (action.actionType) {
     case ActionType.JoinGameRequestReceived:
-      let playerExists =
+      const playerExists =
         state.synced.players.find((player) => player.id == action.playerId) !=
         undefined;
 
       if (!playerExists && state.synced.players.length < MAX_PLAYERS_COUNT) {
-        let newPlayer: Player = { nickname: "", id: action.playerId };
+        const newPlayer: Player = { nickname: "", id: action.playerId };
 
         socket.emit("broadcast accept player", { playerId: action.playerId });
 
-        let newPlayers = [...state.synced.players, newPlayer];
+        const newPlayers = [...state.synced.players, newPlayer];
 
         return {
           ...state,
@@ -123,7 +125,7 @@ function reducer(state: State, action: Action): State {
       socket.emit("broadcast lobby", state.synced);
       return state;
     case ActionType.NicknameUpdateRequestReceived:
-      let newState = {
+      const newState = {
         ...state,
         synced: {
           ...state.synced,
@@ -145,15 +147,14 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-let updateNickname =
+const updateNickname =
   (state: State, nickname: string, dispatch: React.Dispatch<Action>) => () => {
-    console.log("updateNickname");
     dispatch({ actionType: ActionType.NicknameUpdateRequest, nickname });
   };
 
-let startGame = (state: State, dispatch: React.Dispatch<Action>) => () => {
-  let pickedColors: string[] = [];
-  let game: SyncedGameState = {
+const startGame = (state: State, dispatch: React.Dispatch<Action>) => () => {
+  const pickedColors: string[] = [];
+  const game: SyncedGameState = {
     players: state.synced.players.map((player) => ({
       nickname: player.nickname,
       id: player.id,
@@ -166,10 +167,10 @@ let startGame = (state: State, dispatch: React.Dispatch<Action>) => () => {
 };
 
 export default function Lobby(props: LobbyProps) {
-  let { gameId, socket, host, onGameStarted } = props;
-  let playerId = socket.id != undefined ? socket.id : ""; // TODO: deal with deconnection
-  let [nicknameInputValue, setNicknameInputValue] = useState("");
-  let [state, dispatch] = useReducer(reducer, {
+  const { gameId, socket, host, onGameStarted } = props;
+  const playerId = socket.id != undefined ? socket.id : ""; // TODO: deal with deconnection
+  const [nicknameInputValue, setNicknameInputValue] = useState("");
+  const [state, dispatch] = useReducer(reducer, {
     gameId,
     socket,
     host,
@@ -200,6 +201,8 @@ export default function Lobby(props: LobbyProps) {
           });
         }
       );
+
+      updateNickname(state, "host", dispatch)();
     } else {
       socket.emit("request lobby", {});
     }
@@ -219,66 +222,40 @@ export default function Lobby(props: LobbyProps) {
     });
   }, []);
 
-  let player = state.synced.players.find((player) => player.id == playerId);
-  let playerNickname = player ? player.nickname : "";
+  const player = state.synced.players.find((player) => player.id == playerId);
+  const playerNickname = player ? player.nickname : "";
 
-  let readyPlayers = state.synced.players.filter(
+  const readyPlayers = state.synced.players.filter(
     (player) => player.nickname.length > 0
   );
 
-  let isNicknameValid =
-    nicknameInputValue.length >= 3 && nicknameInputValue.length <= 12;
+  const isNicknameValid =
+    nicknameInputValue.length >= 3 &&
+    nicknameInputValue.length <= 12 &&
+    nicknameInputValue != "host";
 
-  // TODO: make two different view files
+  const handleUpdateNickname = updateNickname(
+    state,
+    nicknameInputValue,
+    dispatch
+  );
+
   return (
-    <Container>
-      {playerNickname.length == 0 ? (
-        <div className="nickname-edit">
-          <div className="group">
-            <input
-              type="text"
-              placeholder="Nom"
-              value={nicknameInputValue}
-              onChange={(evt) => setNicknameInputValue(evt.target.value)}
-              onKeyDown={(evt) => {
-                if (evt.key == "Enter" && isNicknameValid) {
-                  updateNickname(state, nicknameInputValue, dispatch)();
-                }
-              }}
-            />
-          </div>
-          <button
-            disabled={!isNicknameValid}
-            onClick={updateNickname(state, nicknameInputValue, dispatch)}
-          >
-            Valider
-          </button>
-        </div>
+    <BuzzerContainer>
+      {host ? (
+        <HostLobby
+          readyPlayers={readyPlayers}
+          startGame={startGame(state, dispatch)}
+        />
       ) : (
-        <Stack spacing={2}>
-          {readyPlayers.map((player) => (
-            <Typography variant="h4" key={player.id}>
-              {player.nickname}
-            </Typography>
-          ))}
-          {host ? (
-            <Button
-              variant="contained"
-              size="large"
-              disabled={readyPlayers.length < 2}
-              onClick={startGame(state, dispatch)}
-            >
-              Commencer
-            </Button>
-          ) : null}
-        </Stack>
+        <PlayerLobby
+          playerNickname={playerNickname}
+          nicknameInputValue={nicknameInputValue}
+          setNicknameInputValue={setNicknameInputValue}
+          isNicknameValid={isNicknameValid}
+          updateNickname={handleUpdateNickname}
+        />
       )}
-    </Container>
+    </BuzzerContainer>
   );
 }
-
-const Container = styled(Paper)({
-  width: "80vw",
-  padding: 20,
-  margin: 20,
-});

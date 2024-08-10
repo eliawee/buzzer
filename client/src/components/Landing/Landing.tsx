@@ -1,5 +1,7 @@
-import { io, Socket, connect } from "socket.io-client";
+import { Socket, connect } from "socket.io-client";
 import { useEffect, useReducer } from "react";
+import BuzzerContainer from "../common/Container";
+import { Button, Stack, Typography } from "@mui/material";
 
 type State = {
   socket?: Socket;
@@ -56,12 +58,7 @@ let createGameRequest =
     }
   };
 
-type LandingProps = {
-  onGameCreated: (socket: Socket, gameId: string) => any;
-};
-
-export default function Landing(props: LandingProps) {
-  let { onGameCreated } = props;
+export default ({ onGameCreated }: IProps) => {
   let [state, dispatch] = useReducer(reducer, {
     waitingForGameCreation: false,
     socketInitialized: false,
@@ -84,14 +81,23 @@ export default function Landing(props: LandingProps) {
   });
 
   return (
-    <div className="landing">
-      <h1>Buzzer</h1>
-      <button
-        disabled={state.waitingForGameCreation}
-        onClick={createGameRequest(state, dispatch)}
-      >
-        Nouvelle Partie
-      </button>
-    </div>
+    <BuzzerContainer>
+      <Stack spacing={2}>
+        <Typography variant="h5" textAlign="center">
+          Um, actually
+        </Typography>
+        <Button
+          variant="contained"
+          disabled={state.waitingForGameCreation}
+          onClick={createGameRequest(state, dispatch)}
+        >
+          Nouvelle Partie
+        </Button>
+      </Stack>
+    </BuzzerContainer>
   );
-}
+};
+
+type IProps = {
+  onGameCreated: (socket: Socket, gameId: string) => void;
+};
