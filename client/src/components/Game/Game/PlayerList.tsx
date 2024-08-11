@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Player } from "../../../types";
+import PlayerScore from "./PlayerScore";
 
 export default ({ players, playerWhoBuzzed, addScore }: IProps) => {
   const getRow = (player: Player) =>
@@ -39,9 +40,7 @@ export default ({ players, playerWhoBuzzed, addScore }: IProps) => {
                 -
               </Button>
             )}
-            <Typography align="center" variant="h5">
-              {player.score}
-            </Typography>
+            {<PlayerScore player={player} playSounds={addScore == undefined} />}
             {addScore && (
               <Button
                 onClick={() => addScore({ playerId: player.id, scoreDiff: 1 })}

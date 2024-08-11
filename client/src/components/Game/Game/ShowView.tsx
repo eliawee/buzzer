@@ -5,7 +5,7 @@ import PlayerWhoBuzzed from "./PlayerWhoBuzzed";
 
 export default ({ players, playerWhoBuzzed }: IProps) => (
   <>
-    <PlayerWhoBuzzed playerWhoBuzzed={playerWhoBuzzed} />
+    <PlayerWhoBuzzed playerWhoBuzzed={playerWhoBuzzed} playSounds />
     <PlayerList players={players} playerWhoBuzzed={playerWhoBuzzed} />
   </>
 );
