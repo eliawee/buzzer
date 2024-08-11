@@ -13,15 +13,9 @@ import HostView from "./Game/HostView";
 import PlayerView from "./Game/PlayerView";
 import { Stack } from "@mui/material";
 import BuzzerContainer from "../common/Container";
+import ShowView from "./Game/ShowView";
 
-type GameProps = {
-  playerId: string;
-  transmitter: Transmitter;
-  host: boolean;
-  initialSyncedState: SyncedGameState;
-};
-
-export default function Game(props: GameProps) {
+export default (props: IProps) => {
   let [state, dispatch] = useReducer(reducer, {
     playerId: props.playerId,
     transmitter: props.transmitter,
@@ -67,14 +61,29 @@ export default function Game(props: GameProps) {
           />
         )}
 
-        {!host && (
+        {!host && !props.isGameshow && (
           <PlayerView
             onBuzz={requestBuzz(state, dispatch)}
             player={localPlayer}
             playerWhoBuzzed={playerWhoBuzzed}
           />
         )}
+
+        {props.isGameshow && (
+          <ShowView
+            players={state.synced.players}
+            playerWhoBuzzed={playerWhoBuzzed}
+          />
+        )}
       </Stack>
     </BuzzerContainer>
   );
-}
+};
+
+type IProps = {
+  playerId: string;
+  transmitter: Transmitter;
+  host: boolean;
+  initialSyncedState: SyncedGameState;
+  isGameshow: boolean;
+};

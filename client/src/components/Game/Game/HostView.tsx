@@ -2,6 +2,7 @@ import { Button, Typography } from "@mui/material";
 
 import { Player } from "../../../types";
 import PlayerList from "./PlayerList";
+import PlayerWhoBuzzed from "./PlayerWhoBuzzed";
 
 export default ({
   players,
@@ -10,12 +11,8 @@ export default ({
   addScore,
 }: IProps) => (
   <>
-    <Typography align="center" variant="h4">
-      {playerWhoBuzzed == undefined ? "Waiting for a player to buzz" : null}
-      {playerWhoBuzzed != undefined
-        ? `${playerWhoBuzzed.nickname} buzzed`
-        : null}
-    </Typography>
+    <PlayerWhoBuzzed playerWhoBuzzed={playerWhoBuzzed} />
+
     <Button
       onClick={resetBuzzers}
       variant="contained"

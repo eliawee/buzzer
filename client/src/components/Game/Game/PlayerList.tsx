@@ -13,7 +13,8 @@ import { Player } from "../../../types";
 
 export default ({ players, playerWhoBuzzed, addScore }: IProps) => {
   const getRow = (player: Player) =>
-    player.nickname != "host" && (
+    player.nickname != "host" &&
+    player.nickname != "gameshow" && (
       <TableRow key={player.id}>
         <TableCell align="right">
           <Avatar sx={{ bgcolor: player.color }}></Avatar>

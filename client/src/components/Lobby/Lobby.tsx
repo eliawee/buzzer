@@ -6,8 +6,6 @@ import BuzzerContainer from "../common/Container";
 import PlayerLobby from "./PlayerLobby";
 import HostLobby from "./HostLobby";
 
-const MAX_PLAYERS_COUNT = 5;
-
 export type LobbySyncedState = {
   players: Player[];
 };
@@ -16,6 +14,7 @@ type BaseProps = {
   gameId: string;
   socket: Socket;
   onGameStarted: (socket: Socket, host: boolean, game: SyncedGameState) => any;
+  isGameshow: boolean;
 };
 
 type GuestLobbyProps = BaseProps & {
@@ -97,7 +96,7 @@ function reducer(state: State, action: Action): State {
         state.synced.players.find((player) => player.id == action.playerId) !=
         undefined;
 
-      if (!playerExists && state.synced.players.length < MAX_PLAYERS_COUNT) {
+      if (!playerExists) {
         const newPlayer: Player = { nickname: "", id: action.playerId };
 
         socket.emit("broadcast accept player", { playerId: action.playerId });
@@ -203,6 +202,8 @@ export default function Lobby(props: LobbyProps) {
       );
 
       updateNickname(state, "host", dispatch)();
+    } else if (props.isGameshow) {
+      updateNickname(state, "gameshow", dispatch)();
     } else {
       socket.emit("request lobby", {});
     }
@@ -232,7 +233,8 @@ export default function Lobby(props: LobbyProps) {
   const isNicknameValid =
     nicknameInputValue.length >= 3 &&
     nicknameInputValue.length <= 12 &&
-    nicknameInputValue != "host";
+    nicknameInputValue != "host" &&
+    nicknameInputValue != "gameshow";
 
   const handleUpdateNickname = updateNickname(
     state,

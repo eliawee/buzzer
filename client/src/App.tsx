@@ -6,6 +6,7 @@ import Lobby, { LobbySyncedState } from "./components/Lobby/Lobby";
 import Game from "./components/Game/Game";
 import { SyncedGameState } from "./types";
 import Transmitter from "./Transmitter";
+import { filter, get, head, isEmpty, split } from "lodash";
 
 enum StateType {
   Landed,
@@ -77,7 +78,7 @@ function reducer(state: State, action: Action) {
     case ActionType.GameCreation:
       window.history.pushState("lobby", "Lobby", `/${action.gameId}`);
 
-      let createdGameState: CreatedGameState = {
+      const createdGameState: CreatedGameState = {
         stateType: StateType.CreatedGame,
         gameId: action.gameId,
         socket: action.socket,
@@ -85,9 +86,7 @@ function reducer(state: State, action: Action) {
 
       return createdGameState;
     case ActionType.GameJoining:
-      window.history.pushState("lobby", "Lobby", `/${action.gameId}`);
-
-      let joinedGameState: JoinedGameState = {
+      const joinedGameState: JoinedGameState = {
         stateType: StateType.JoinedGame,
         gameId: action.gameId,
         socket: action.socket,
@@ -96,7 +95,7 @@ function reducer(state: State, action: Action) {
 
       return joinedGameState;
     case ActionType.GameStart:
-      let gameStartedState: StartedGameState = {
+      const gameStartedState: StartedGameState = {
         stateType: StateType.StartedGame,
         socket: action.socket,
         game: action.game,
@@ -109,28 +108,35 @@ function reducer(state: State, action: Action) {
   }
 }
 
-let onGameCreated =
+const onGameCreated =
   (state: State, dispatch: React.Dispatch<Action>) =>
   (socket: Socket, gameId: string) => {
     dispatch({ actionType: ActionType.GameCreation, socket, gameId });
   };
 
-let onGameJoined =
+const onGameJoined =
   (state: State, dispatch: React.Dispatch<Action>) =>
   (socket: Socket, gameId: string, lobby: LobbySyncedState) => {
     dispatch({ actionType: ActionType.GameJoining, socket, gameId, lobby });
   };
 
-let onGameStarted =
+const onGameStarted =
   (state: State, dispatch: React.Dispatch<Action>) =>
   (socket: Socket, host: boolean, game: SyncedGameState) => {
     dispatch({ actionType: ActionType.GameStart, socket, host, game });
   };
 
 function App() {
-  let [state, dispatch] = useReducer(reducer, { stateType: StateType.Landed });
-  let requestedGameId = window.location.pathname.replace("/", "");
-  let playerId =
+  const [state, dispatch] = useReducer(reducer, {
+    stateType: StateType.Landed,
+  });
+  const urlParams = filter(
+    split(window.location.pathname, "/"),
+    (item: string) => !isEmpty(item)
+  );
+  const requestedGameId = get(urlParams, 0, "");
+  const isGameshow = get(urlParams, 1, "") == "gameshow";
+  const playerId =
     state.stateType != StateType.Landed ? state.socket.id : undefined;
 
   useEffect(() => {
@@ -139,44 +145,47 @@ function App() {
 
   return (
     <>
-      {state.stateType == StateType.Landed && requestedGameId.length == 0 ? (
+      {state.stateType == StateType.Landed && isEmpty(requestedGameId) && (
         <Landing onGameCreated={onGameCreated(state, dispatch)} />
-      ) : null}
+      )}
 
-      {state.stateType == StateType.Landed && requestedGameId.length > 0 ? (
+      {state.stateType == StateType.Landed && !isEmpty(requestedGameId) && (
         <JoiningHall
           gameId={requestedGameId}
           onGameJoined={onGameJoined(state, dispatch)}
         />
-      ) : null}
+      )}
 
-      {state.stateType == StateType.CreatedGame ? (
+      {state.stateType == StateType.CreatedGame && (
         <Lobby
           gameId={state.gameId}
           socket={state.socket}
           host={true}
           onGameStarted={onGameStarted(state, dispatch)}
+          isGameshow={isGameshow}
         />
-      ) : null}
+      )}
 
-      {state.stateType == StateType.JoinedGame ? (
+      {state.stateType == StateType.JoinedGame && (
         <Lobby
           gameId={state.gameId}
           socket={state.socket}
           host={false}
           initialLobby={state.lobby}
           onGameStarted={onGameStarted(state, dispatch)}
+          isGameshow={isGameshow}
         />
-      ) : null}
+      )}
 
-      {state.stateType == StateType.StartedGame && playerId != undefined ? (
+      {state.stateType == StateType.StartedGame && playerId != undefined && (
         <Game
           playerId={playerId}
           transmitter={new Transmitter(state.socket)}
           host={state.host}
           initialSyncedState={state.game}
+          isGameshow={isGameshow}
         />
-      ) : null}
+      )}
     </>
   );
 }
