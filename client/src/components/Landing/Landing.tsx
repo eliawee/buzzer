@@ -2,6 +2,7 @@ import { Socket, connect } from "socket.io-client";
 import { useEffect, useReducer } from "react";
 import BuzzerContainer from "../common/Container";
 import { Button, Stack, Typography } from "@mui/material";
+import { get } from "lodash";
 
 type State = {
   socket?: Socket;
@@ -37,7 +38,9 @@ type Action =
 function reducer(state: State, action: Action) {
   switch (action.actionType) {
     case ActionType.GameCreationRequest:
-      let socket = connect("http://localhost:3001");
+      let host = get(process.env, "REACT_APP_SERVER_HOST_NAME", "localhost");
+      let port = get(process.env, "REACT_APP_SERVER_PORT", "3001");
+      let socket = connect(`http://${host}:${port}`);
 
       socket.emit("create game");
 
