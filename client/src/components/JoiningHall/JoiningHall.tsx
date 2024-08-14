@@ -2,6 +2,7 @@ import { connect, Socket } from "socket.io-client";
 import { useEffect, useReducer } from "react";
 import { LobbySyncedState } from "../Lobby/Lobby";
 import BuzzerContainer from "../common/Container";
+import { get } from "lodash";
 
 type State = {
   gameId: string;
@@ -52,7 +53,9 @@ type JoiningHallProps = {
 function reducer(state: State, action: Action) {
   switch (action.actionType) {
     case ActionType.ConnectionRequest:
-      let socket = connect("http://localhost:3001");
+      let host = get(process.env, "REACT_APP_SERVER_HOST_NAME", "localhost");
+      let port = get(process.env, "REACT_APP_SERVER_PORT", "3001");
+      let socket = connect(`http://${host}:${port}`);
 
       return { ...state, socket };
     case ActionType.JoiningRequest:
